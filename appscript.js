@@ -6,10 +6,10 @@ $(function(){
 	var $message = $('#message');
 	var $chat = $('#chat');
 	var $messageArea = $('#messageArea');
-	var $userFormArea = $('#userFormArea');
-	var $userForm = $('#userForm');
-	var $username = $('#username');
-	var $users = $('#users');
+	// var $userFormArea = $('#userFormArea');
+	// var $userForm = $('#userForm');
+	// var $username = $('#username');
+	// var $users = $('#users');
 
 	$messageForm.submit(function(e){
 		e.preventDefault();
@@ -22,17 +22,16 @@ $(function(){
 		$chat.append('<div class="well"><strong>' + data.user + ':</strong> ' + data.msg + '</div>');
 	});
 
-	$userForm.submit(function(e){
-		e.preventDefault();
-		socket.emit('new user', $username.val(), function(data){
-			if(data){
-				$userFormArea.hide();
-				$messageArea.show();
-			}
-		});
-		$username.val('');
-
-	});
+	// $userForm.submit(function(e){
+	// 	e.preventDefault();
+	// 	socket.emit('new user', $username.val(), function(data){
+	// 		if(data){
+	// 			$userFormArea.hide();
+	// 			$messageArea.show();
+	// 		}
+	// 	});
+	// 	$username.val('');
+	// });
 
 	socket.on('get users', function(data){
 		var html = '';
