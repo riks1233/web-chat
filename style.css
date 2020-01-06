@@ -45,9 +45,10 @@ body {
 	overflow: auto;
 }
 
-.connected_users {
+#connectedUsers {
 	width: 240px;
-	padding-bottom: 50px; /*to avoid clipping, which is caused by h3 heading*/
+	padding-bottom: 50px;
+	/*to avoid clipping, which is caused by h3 heading*/
 	/* height: 100%; */
 	/* box-sizing: border-box; */
 }
@@ -80,6 +81,7 @@ h3 {
 	height: 50px;
 	border-radius: 50px;
 	margin: auto 10px;
+	background: grey;
 	/* -webkit-border-radius: 25px;
 	-moz-border-radius: 25px; */
 }
@@ -178,15 +180,8 @@ h3 {
 	margin-top: auto;
 	margin-bottom: auto;
 	margin-right: 5px;
-	background: linear-gradient(130deg, rgb(255, 0, 153), rgb(73, 50, 64));
-}
-
-.your_message {
-	display: flex;
-	max-width: 70%;
-	margin-left: auto;
-	margin-right: 0;
-	margin-bottom: 5px;
+	background: grey;
+	/* background: linear-gradient(130deg, rgb(255, 0, 153), rgb(73, 50, 64)); */
 }
 
 .user_message_arrow_left {
@@ -198,6 +193,14 @@ h3 {
 	border-bottom: 10px solid transparent;
 	border-right: 10px solid;
 	border-right-color: var(--user-message-color);
+}
+
+.your_message {
+	display: flex;
+	max-width: 70%;
+	margin-left: auto;
+	margin-right: 0;
+	margin-bottom: 5px;
 }
 
 /* .your_message_arrow_down {
@@ -270,7 +273,7 @@ h3 {
 	outline: 0;
 }
 
-#sendBtn {
+.send_btn {
 	background-color: var(--your-message-color);
 	/* Green */
 	border: none;
@@ -284,10 +287,10 @@ h3 {
 	border-radius: 6px;
 }
 
-#sendBtn:hover {
+.send_btn:hover {
 	cursor: pointer;
 }
 
-#sendBtn:focus {
+.send_btn:focus {
 	outline: 0;
 }
