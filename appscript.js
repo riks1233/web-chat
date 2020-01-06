@@ -52,12 +52,20 @@ function getConnectedUserHtml(publicId, username, colorGradientCss) {
 	`;
 }
 
+
+
 var socket = io.connect();
 var users = [];
 var $connectedUsers = $('#connectedUsers');
 var $userMessageForm = $('#userMessageForm');
 var $inputBox = $('#inputBox');
 var $messages = $('#messages');
+var messageAudio = $('#messageAudio').get(0);
+messageAudio.muted = false;
+
+$("div").bind("append", function() { alert('Hello, world!'); });
+
+$("div").append("<span>");
 
 // Put this in registration form
 // var your_username = 'Joshua';
@@ -71,8 +79,10 @@ socket.emit('new_user',
 		"color_schema_deg": 130
 	}
 );
-$messages.append(getSysMessageUserJoinedHtml(your_username));
+appendToMessages(getSysMessageUserJoinedHtml(your_username));
 socket.emit('get_users');
+
+
 
 $(function () {
 	// var $messageArea = $('#messageArea');
@@ -94,15 +104,18 @@ $(function () {
 		e.preventDefault();
 		let msg = $inputBox.val();
 		$inputBox.val('');
+		if (!msg.trim().length) // inputBox is empty
+			return;
 		socket.emit('send_message', msg);
-		$messages.append(getYourMessageHtml(msg));
+		appendToMessages(getYourMessageHtml(msg));
 		// console.log('Submitted');
 	});
 
 	//Receive message
 	socket.on('new_message', function (data) {
 		console.log(data.msg + " " + data.publicId);
-		$messages.append(getUserMessageHtml(data.msg, data.publicId));
+		appendToMessages(getUserMessageHtml(data.msg, data.publicId));
+		scrollToNewMessages();
 	});
 
 	//Sys messages
@@ -110,14 +123,14 @@ $(function () {
 		users.push(data);
 		console.log(users);
 		$connectedUsers.append(getConnectedUserHtml(data.publicId, data.username, data.colorGradientCss));
-		$messages.append(getSysMessageUserJoinedHtml(data.username));
+		appendToMessages(getSysMessageUserJoinedHtml(data.username));
 	});
 
 	socket.on('sys_user_left', function (publicId) {
 		console.log('sys_user_left: ' + publicId);
 		for (let i = 0; i < users.length; i++) {
 			if (users[i].publicId == publicId) {
-				$messages.append(getSysMessageUserLeftHtml(users[i].username));
+				appendToMessages(getSysMessageUserLeftHtml(users[i].username));
 				$('#' + publicId.toString()).remove();
 				users.splice(i, 1);
 				// delete users[i]; //leaves an "empty" element behind and thus later give a typeerror: cannot read property publicId of 'undefined'
@@ -138,6 +151,7 @@ $(function () {
 		$connectedUsers.append(connectedUsersHtml);
 		// updateConnectedUsers();
 	});
+
 
 	//Registering
 	// $userForm.submit(function(e){
@@ -175,3 +189,16 @@ $('.chat_box').mouseup(function () {
 		$inputBox.focus();
 	}
 });
+
+function appendToMessages(html){
+	$messages.append(html);
+	scrollToNewMessages();
+	messageAudio.pause();
+	messageAudio.currentTime = 0;
+	messageAudio.play();
+}
+
+function scrollToNewMessages(){
+	let messagesDomObj = $messages.get(0);
+	messagesDomObj.scrollTop = messagesDomObj.scrollHeight;
+}
