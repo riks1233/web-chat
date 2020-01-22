@@ -7,35 +7,49 @@ var fs = require('fs');
 //seems like __dirname is equal to including a . before name
 //i.e. __dirname + '/index.html' == './index.html'
 
-console.log('after calling readFile');
-
 server.listen(process.env.PORT || 3000);
 console.log('Server running...');
 
-app.use(express.static(__dirname + '/'));
+var publicRoot = __dirname + '/public/';
+app.use(express.static(publicRoot));
+app.use(express.urlencoded());
 
+// GET requests
 app.get('/', function (req, res) {
-	res.sendFile(__dirname + '/index.html');
+	res.sendFile(publicRoot + '/register.html');
 });
+
+app.get('/circle_colors', function (req, res) {
+	res.sendFile(publicRoot + '/circle_colors.json')
+});
+
+app.get('/chat', function (req, res) {
+	res.sendFile(publicRoot + '/chat.html');
+});
+
+// app.post('/iwannachat', function (req, res) {
+// 	// console.log(res);
+// 	// console.log(req.body.name);
+// 	// console.log(`POST request received from ${req.body.name} with style:\n${req.body.style}`);
+// 	// res.send('POST data which was sent from server');
+// 	// res.sendFile(publicRoot + '/chatstyle.css');
+// 	res.sendFile(publicRoot + '/chat.html');
+// });
 
 var connections = [];
 var circle_colors = [];
 
-fs.readFile(__dirname + '/circle_colors.json', 'utf8', function (err, contents) {
+fs.readFile(publicRoot + '/circle_colors.json', 'utf8', function (err, contents) {
 	// console.log(contents);
 	circle_colors = JSON.parse(contents);
-	console.log(circle_colors.length); //16
-	console.log(circle_colors[0].name); //skyline
+	// console.log(circle_colors.length); //16
+	// console.log(circle_colors[0].name); //skyline
 });
 
 io.sockets.on('connection', function (socket) {
-	//this approach doesnt work as duplicates may occur, when people come and go
-	// socket.publicId = connections.length - 1; // sending this id to clients
-
 	let id = generateId();
 	socket.publicId = id;
 	connections.push(socket);
-
 	console.log('Connected: %s sockets connected', connections.length);
 
 	//Disconnect
@@ -61,15 +75,17 @@ io.sockets.on('connection', function (socket) {
 	socket.on('new_user', function (data) {
 		socket.username = data.username;
 		// console.log(socket.username);
-		let colorsValues = circle_colors[data.color_schema].colors;
-		let rgbValues = '';
-		for (let i = 0; i < colorsValues.length; i++) {
-			rgbValues += hexToRgbString(colorsValues[i]);
-			if (!(i == colorsValues.length - 1)) {
-				rgbValues += ',';
-			}
-		}
-		let user_circle_background_css_string = `background: linear-gradient(` + data.color_schema_deg + `deg,` + rgbValues + `);`;
+		// let colorsValues = circle_colors[data.color_schema].colors;
+		// let rgbValues = '';
+		// for (let i = 0; i < colorsValues.length; i++) {
+		// 	rgbValues += hexToRgbString(colorsValues[i]);
+		// 	if (!(i == colorsValues.length - 1)) {
+		// 		rgbValues += ',';
+		// 	}
+		// }
+		// let user_circle_background_css_string = `background: linear-gradient(` + data.color_schema_deg + `deg,` + rgbValues + `);`;
+
+		let user_circle_background_css_string = `background: ${data.color_schema};`;
 		// console.log(user_circle_background_css_string);
 
 		// background: linear-gradient(130deg, rgb(255, 0, 153), rgb(73, 50, 64));

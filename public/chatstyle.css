@@ -1,3 +1,8 @@
+:root {
+	--your-message-color: #087EF5;
+	--user-message-color: #e6e6e6;
+}
+
 html {
 	/* background: linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 100%); */
 	background: #fff;
@@ -11,11 +16,6 @@ body {
 	margin: 0;
 	padding: 0 10px;
 	height: 100%;
-}
-
-:root {
-	--your-message-color: #087EF5;
-	--user-message-color: #e6e6e6;
 }
 
 .wrapper {
@@ -47,7 +47,7 @@ body {
 
 #connectedUsers {
 	width: 240px;
-	padding-bottom: 50px;
+	padding-bottom: 90px;
 	/*to avoid clipping, which is caused by h3 heading*/
 	/* height: 100%; */
 	/* box-sizing: border-box; */
@@ -105,6 +105,16 @@ h3 {
 	line-height: 1em;
 	margin-top: auto;
 	margin-bottom: auto;
+}
+
+.settings {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	background: white;
+	height: 40px;
+	display:flex;
+	justify-content: flex-end;
 }
 
 .chat_box {

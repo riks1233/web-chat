@@ -1,6 +1,9 @@
 // var $email = $("#email"); // refers to the jQuery object representation of the dom object
 // var email_field = $("#email").get(0); // refers to the dom object itself
-
+// var your_username = 'Joshua';
+// var your_username = prompt('Enter your name');
+// make safe, call color by id from circle_colors.json
+// var your_color_schema = Math.floor((Math.random() * 16)); //chosen from circle_colors.json
 
 //The following go under #messages div
 const SYS_MESSAGE_PRE_CONTENT = `<div class="system_message">`; // + content + closing div
@@ -52,9 +55,10 @@ function getConnectedUserHtml(publicId, username, colorGradientCss) {
 	`;
 }
 
+// var socket = io.connect();
 
 
-var socket = io.connect();
+
 var users = [];
 var $connectedUsers = $('#connectedUsers');
 var $userMessageForm = $('#userMessageForm');
@@ -62,27 +66,22 @@ var $inputBox = $('#inputBox');
 var $messages = $('#messages');
 var messageAudio = $('#messageAudio').get(0);
 messageAudio.muted = false;
-
-$("div").bind("append", function() { alert('Hello, world!'); });
-
-$("div").append("<span>");
-
-// Put this in registration form
-// var your_username = 'Joshua';
-var your_username = prompt('Enter your name');
-// make safe, call color by id from circle_colors.json
-var your_color_schema = Math.floor((Math.random() * 16)); //chosen from circle_colors.json
+if (yourCircleSelectedStyle == null) {
+	yourCircleSelectedStyle = "grey";
+}
+if (yourName == null) {
+	yourName = "Microbamboni";
+}
+yourCircleSelectedStyle;
 socket.emit('new_user',
 	{
-		"username": your_username,
-		"color_schema": your_color_schema,
+		"username": yourName,
+		"color_schema": yourCircleSelectedStyle,
 		"color_schema_deg": 130
 	}
 );
-appendToMessages(getSysMessageUserJoinedHtml(your_username));
+appendToMessages(getSysMessageUserJoinedHtml(yourName));
 socket.emit('get_users');
-
-
 
 $(function () {
 	// var $messageArea = $('#messageArea');
@@ -113,7 +112,7 @@ $(function () {
 
 	//Receive message
 	socket.on('new_message', function (data) {
-		console.log(data.msg + " " + data.publicId);
+		// console.log(data.msg + " " + data.publicId);
 		appendToMessages(getUserMessageHtml(data.msg, data.publicId));
 		scrollToNewMessages();
 	});
@@ -121,7 +120,7 @@ $(function () {
 	//Sys messages
 	socket.on('sys_user_joined', function (data) {
 		users.push(data);
-		console.log(users);
+		// console.log(users);
 		$connectedUsers.append(getConnectedUserHtml(data.publicId, data.username, data.colorGradientCss));
 		appendToMessages(getSysMessageUserJoinedHtml(data.username));
 	});

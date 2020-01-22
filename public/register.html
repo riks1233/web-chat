@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="./registerstyle.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<title>Open chatroom</title>
+</head>
+
+<body>
+	<div class="wrapper">
+		<div id="chooseCircleWrapper">
+			<!-- Color credits to: https://uigradients.com/ -->
+			<div id="regChooseCircleColor">
+				<!-- <div class="circle_choice_container">
+					<div class="circle_choice" style="background: linear-gradient(90deg, rgb(20, 136, 204), rgb(43, 50, 178)); min-width: 30px; min-height: 30px;"></div>
+				</div> -->
+				<!-- <div class="circle_choice_container">
+					<div class="circle_choice" style="background: rgba(0, 0, 0, 0) linear-gradient(90deg, rgb(20, 136, 204), rgb(43, 50, 178)) repeat scroll 0% 0% / auto padding-box border-box; min-width: 30px; min-height: 30px;"></div>
+				</div> -->
+			</div>
+		</div>
+		<div class="reg_your_circle_wrapper">
+			<div class="reg_your_circle_container">
+				<div id="regYourCircleHover">
+					<div id="regYourCircle">
+						<!-- http://kodhus.com/newsite/put-items-evenly-circles-circumference/ -->
+						<!-- <div class="tick"></div>
+						<div class="tick"></div>
+						<div class="tick"></div>
+						<div class="tick"></div> -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="centering_wrapper margin-top40">
+			<input id="regYourNameField" type="input" placeholder="Name" required autocomplete="off" />
+		</div>
+		<div class="centering_wrapper underbar">
+			<div id="regYourNameFieldUnderline"></div>
+		</div>
+		<div class="centering_wrapper margin-top40">
+			<button id="goToChatBtn" type="button" onclick="goToChat()">Go to chat</button>
+		</div>
+		<!-- <span id="testoutput">testoutputish
+		<!-- <div id="redLocator"></div> -->
+	</div>
+</body>
+<script src="./registerscript.js"></script>
+
+</html>

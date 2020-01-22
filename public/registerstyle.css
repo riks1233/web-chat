@@ -1,0 +1,294 @@
+:root {
+	--choice-circle-diameter: 30px;
+	--choice-circle-hover-diameter: 44px;
+	--choice-circle-container-side: 42px;
+	--choice-circle-approach-area-side: 100px;
+	--your-circle-diameter: 200px;
+	--your-circle-hover-diameter: 180px;
+	--your-message-color: #087EF5;
+	--your-circle-hover-transition-duration: 0.15s;
+	--arrow-size: 20px;
+}
+
+body {
+	margin: 0;
+	margin-bottom: 20px;
+	padding: 0;
+	position: relative;
+	font-family: "Poppins", sans-serif;
+}
+
+.wrapper {
+	max-width: 960px;
+	/* min-width: 480px; */
+	margin: auto;
+	/* margin-top: 30px; */
+	padding: 30px 0;
+	display: block;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+#chooseCircleWrapper {
+	display: flex;
+	margin: auto;
+	padding: 20px;
+	width: auto;
+}
+
+#regChooseCircleColor {
+	margin: auto;
+	/* height: 200px; */
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.circle_choice_container {
+	margin: 0;
+	padding: 0;
+	position: relative;
+	width: var(--choice-circle-container-side);
+	height: var(--choice-circle-container-side);
+	border-radius: 50%;
+	/* border: 2px solid #ccc; */
+	box-sizing: border-box;
+}
+
+.circle_choice {
+	margin: auto;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	min-width: var(--choice-circle-diameter);
+	min-height: var(--choice-circle-diameter);
+	/* border-radius: var(--choice-circle-diameter); */
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	/* transitions break approach animation */
+	/* transition: 0.05s; */
+	/* transition-property: min-width, min-height; */
+	background: grey;
+	cursor: pointer;
+}
+
+/* hover resizing done by js */
+
+/* .circle_choice:hover {
+	min-width: var(--choice-circle-hover-diameter);
+	min-height: var(--choice-circle-hover-diameter);
+} */
+
+.reg_your_circle_wrapper {
+	min-width: var(--your-circle-diameter);
+	min-height: var(--your-circle-diameter);
+	display: flex;
+	margin-top: 20px;
+}
+
+.reg_your_circle_container {
+	min-width: 260px;
+	min-height: 260px;
+	display: flex;
+	margin: auto;
+}
+
+#regYourCircleHover {
+	min-width: var(--your-circle-diameter);
+	min-height: var(--your-circle-diameter);
+	border-radius: 50%;
+	display: flex;
+	margin: auto;
+	position: relative;
+	z-index: 1;
+}
+
+#regYourCircleHover:hover {
+	min-width: 260px;
+	min-height: 260px;
+	/* background: black; */
+	cursor: pointer;
+}
+
+#regYourCircle {
+	/* position: absolute; */
+	min-width: var(--your-circle-diameter);
+	min-height: var(--your-circle-diameter);
+	border-radius: 50%;
+	margin: auto;
+	background: linear-gradient(180deg, #888, #ccc);
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	/* transition: background 0.2s ease-out; */
+	transition: var(--your-circle-hover-transition-duration);
+	transition-property: min-width, min-height;
+	position: relative;
+	border: 4px solid white;
+}
+
+#regYourCircleHover:hover #regYourCircle {
+	/* background overridden by mousemovement listener finishing lines of code */
+	/* background: grey; */
+	min-width: var(--your-circle-hover-diameter);
+	min-height: var(--your-circle-hover-diameter);
+}
+
+.tick {
+	width: 8px;
+	height: 8px;
+	background: #ddd;
+	position: absolute;
+	border-radius: 50%;
+	left: 50%;
+	top: 50%;
+	margin-left: -5px;
+	margin-top: -5px;
+	transition: 0.2s ease-in-out;
+	transition-property: transform;
+	z-index: -1;
+}
+
+#arrow {
+	width: 0;
+	height: 0;
+	/* border-left: var(--arrow-size) solid transparent;
+  border-right: var(--arrow-size) solid transparent;
+	border-bottom: var(--arrow-size) solid transparent; */
+	border-style: solid;
+	border-width: 0 8px 16px 8px;
+	border-color: transparent transparent black transparent;
+	/* border-bottom-color: black; */
+	/* transform: rotate(270deg); */
+	z-index: -1;
+}
+
+.reg_your_name_wrapper {
+	display: block;
+	margin-top: 50px;
+}
+
+.centering_wrapper {
+	display: flex;
+	width: 100%;
+}
+
+.underbar {
+	height: 3px;
+}
+
+.margin-top40 {
+	margin-top: 50px;
+}
+
+
+
+/*
+#regYourNameField {
+	width: auto;
+	font-size: 36px;
+	text-align: center;
+	margin: auto;
+	border: none;
+	border-bottom: 3px solid black;
+	padding-bottom: 14px;
+} */
+
+/* #regYourNameField:focus { */
+	/* border: 1px solid #bbb; */
+	/* outline: 0; */
+	/* border: 0px; */
+/* } */
+
+::placeholder {
+	color: #ccc;
+}
+
+#regYourNameField {
+	margin:auto;
+  font-family: inherit;
+	font-size: 32px;
+	text-align: center;
+  width: 400px;
+  border: 0;
+  /* border-bottom: 2px solid black; */
+  outline: 0;
+  color: black;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+
+#regYourNameFieldUnderline {
+	height: 2px;
+	width: 400px;
+	margin: auto;
+	background: #ccc;
+}
+
+#goToChatBtn {
+	margin: auto;
+}
+
+#goToChatBtn {
+	background-color: var(--your-message-color);
+	/* Green */
+	border: none;
+	color: white;
+	/* box-sizing: content-box; */
+	padding: 12px 40px;
+	font-size: 18px;
+	text-align: center;
+	text-decoration: none;
+	margin: auto;
+	border-radius: 6px;
+}
+
+#goToChatBtn:hover {
+	cursor: pointer;
+}
+
+#goToChatBtn:focus {
+	outline: 0;
+}
+
+/* #regYourCircle .tick:nth-child(1) {
+	transform: rotate(0deg) translate(80px);
+}
+
+#regYourCircle .tick:nth-child(2) {
+	transform: rotate(90deg) translate(80px);
+}
+
+#regYourCircle .tick:nth-child(3) {
+	transform: rotate(180deg) translate(80px);
+}
+
+#regYourCircle .tick:nth-child(4) {
+	transform: rotate(270deg) translate(80px);
+} */
+
+/* #regYourCircleHover:hover #regYourCircle .tick:nth-child(1) {
+	transform: rotate(0deg) translate(110px);
+}
+#regYourCircleHover:hover #regYourCircle .tick:nth-child(2) {
+	transform: rotate(90deg) translate(110px);
+}
+#regYourCircleHover:hover #regYourCircle  .tick:nth-child(3) {
+	transform: rotate(180deg) translate(110px);
+}
+#regYourCircleHover:hover #regYourCircle  .tick:nth-child(4) {
+	transform: rotate(270deg) translate(110px);
+} */
+
+#redLocator {
+	position: absolute;
+	left: 20px;
+	top: 20px;
+	width: 20px;
+	height: 20px;
+	/* border-radius: 20px; */
+	background: red;
+	pointer-events: none;
+	/* z-index: 1; */
+}
