@@ -1,12 +1,14 @@
 :root {
 	--choice-circle-diameter: 30px;
-	--choice-circle-hover-diameter: 44px;
-	--choice-circle-container-side: 42px;
+	--choice-circle-container-side: 50px;
 	--choice-circle-approach-area-side: 100px;
 	--your-circle-diameter: 200px;
-	--your-circle-hover-diameter: 180px;
+	--your-circle-hover-diameter: 220px;
+	--your-circle-active-diameter: 210px;
+	--your-circle-container-diameter: 310px;
 	--your-message-color: #087EF5;
-	--your-circle-hover-transition-duration: 0.15s;
+	--your-circle-hover-transition-duration: 0.2s;
+	--tick-transition-duration: 0.3s;
 	--arrow-size: 20px;
 }
 
@@ -66,30 +68,41 @@ body {
 	border-radius: 50%;
 	-webkit-border-radius: 50%;
 	-moz-border-radius: 50%;
-	/* transitions break approach animation */
-	/* transition: 0.05s; */
-	/* transition-property: min-width, min-height; */
+	transition: 0.1s;
+	transition-property: min-width, min-height, box-shadow;
+	box-shadow: 1px 2px 1px 0px rgba(0, 0, 0, 0.15);
 	background: grey;
 	cursor: pointer;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 /* hover resizing done by js */
 
-/* .circle_choice:hover {
-	min-width: var(--choice-circle-hover-diameter);
-	min-height: var(--choice-circle-hover-diameter);
-} */
+.circle_choice:hover {
+	/* min-width: 46px; */
+	/* min-height: 46px; */
+	/* background: grey; */
+	z-index: 2;
+	/*z-index is 2 so it is higher than selected circle*/
+	/* border: 2px solid white; */
+	/* -webkit-box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.5); */
+	/* -moz-box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.5); */
+	box-shadow: 2px 4px 2px 0px rgba(0, 0, 0, 0.2);
+}
 
 .reg_your_circle_wrapper {
 	min-width: var(--your-circle-diameter);
 	min-height: var(--your-circle-diameter);
 	display: flex;
-	margin-top: 20px;
+	/* margin-top: 20px; */
 }
 
 .reg_your_circle_container {
-	min-width: 260px;
-	min-height: 260px;
+	min-width: var(--your-circle-container-diameter);
+	min-height: var(--your-circle-container-diameter);
 	display: flex;
 	margin: auto;
 }
@@ -101,14 +114,16 @@ body {
 	display: flex;
 	margin: auto;
 	position: relative;
-	z-index: 1;
+	/* z-index gives errors when unhovering the circle*/
+	/* z-index: 2; */
 }
 
 #regYourCircleHover:hover {
-	min-width: 260px;
-	min-height: 260px;
+	min-width: var(--your-circle-container-diameter);
+	min-height: var(--your-circle-container-diameter);
+	cursor: none;
 	/* background: black; */
-	cursor: pointer;
+	/* border: 1px solid black; */
 }
 
 #regYourCircle {
@@ -121,10 +136,12 @@ body {
 	-webkit-border-radius: 50%;
 	-moz-border-radius: 50%;
 	/* transition: background 0.2s ease-out; */
-	transition: var(--your-circle-hover-transition-duration);
-	transition-property: min-width, min-height;
+	transition: var(--your-circle-hover-transition-duration) ease-in-out;
+	/* transition-delay: 0.1s; */
+	transition-property: min-width, min-height, box-shadow;
 	position: relative;
-	border: 4px solid white;
+	box-shadow: 2px 4px 2px 0px rgba(0, 0, 0, 0.3);
+	/* box-sizing: content-box; */
 }
 
 #regYourCircleHover:hover #regYourCircle {
@@ -132,9 +149,22 @@ body {
 	/* background: grey; */
 	min-width: var(--your-circle-hover-diameter);
 	min-height: var(--your-circle-hover-diameter);
+	box-shadow: 4px 8px 4px 0px rgba(0, 0, 0, 0.2);
 }
 
-.tick {
+#regYourCircleHover:active #regYourCircle {
+	/* background overridden by mousemovement listener finishing lines of code */
+	/* background: grey; */
+	/* transition: 0.05s; */
+	transition: 0s;
+	min-width: var(--your-circle-diameter);
+	min-height: var(--your-circle-diameter);
+	box-shadow: 2px 4px 2px 0px rgba(0, 0, 0, 0.3);
+}
+
+/*rounded tick*/
+
+/* .tick {
 	width: 8px;
 	height: 8px;
 	background: #ddd;
@@ -147,6 +177,20 @@ body {
 	transition: 0.2s ease-in-out;
 	transition-property: transform;
 	z-index: -1;
+} */
+
+/*flat-line tick*/
+
+.tick {
+	width: 8px;
+	height: 2px;
+	background-color: #ddd;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transition: var(--tick-transition-duration) ease-out;
+	transition-property: transform, background-color;
+	z-index: -1;
 }
 
 #arrow {
@@ -156,11 +200,23 @@ body {
   border-right: var(--arrow-size) solid transparent;
 	border-bottom: var(--arrow-size) solid transparent; */
 	border-style: solid;
-	border-width: 0 8px 16px 8px;
+	border-width: 0 14px 28px 14px;
 	border-color: transparent transparent black transparent;
 	/* border-bottom-color: black; */
+	transition: 0.1s ease-in-out;
+	transition-property: border-width, transform;
 	/* transform: rotate(270deg); */
-	z-index: -1;
+	/* z-index: -1; */
+	/* box-shadow: isn't working because the element is a rectangle actually */
+}
+
+#greyArrow {
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0 8px 16px 8px;
+	border-color: transparent transparent #aaa transparent;
+	z-index: -2;
 }
 
 .reg_your_name_wrapper {
@@ -173,15 +229,9 @@ body {
 	width: 100%;
 }
 
-.underbar {
-	height: 3px;
-}
-
 .margin-top40 {
 	margin-top: 50px;
 }
-
-
 
 /*
 #regYourNameField {
@@ -195,9 +245,13 @@ body {
 } */
 
 /* #regYourNameField:focus { */
-	/* border: 1px solid #bbb; */
-	/* outline: 0; */
-	/* border: 0px; */
+
+/* border: 1px solid #bbb; */
+
+/* outline: 0; */
+
+/* border: 0px; */
+
 /* } */
 
 ::placeholder {
@@ -205,18 +259,22 @@ body {
 }
 
 #regYourNameField {
-	margin:auto;
-  font-family: inherit;
+	margin: auto;
+	font-family: inherit;
 	font-size: 32px;
 	text-align: center;
-  width: 400px;
-  border: 0;
-  /* border-bottom: 2px solid black; */
-  outline: 0;
-  color: black;
-  padding: 7px 0;
-  background: transparent;
-  transition: border-color 0.2s;
+	width: 400px;
+	border: 0;
+	/* border-bottom: 2px solid black; */
+	outline: 0;
+	color: black;
+	padding: 7px 0;
+	background: transparent;
+	transition: border-color 0.2s;
+}
+
+.underline {
+	height: 4px;
 }
 
 #regYourNameFieldUnderline {
@@ -224,6 +282,8 @@ body {
 	width: 400px;
 	margin: auto;
 	background: #ccc;
+	transition: 0.1s ease;
+	transition-property: height;
 }
 
 #goToChatBtn {
@@ -280,6 +340,55 @@ body {
 #regYourCircleHover:hover #regYourCircle  .tick:nth-child(4) {
 	transform: rotate(270deg) translate(110px);
 } */
+
+.checkmark {
+	display: none;
+}
+
+.checkmark.draw:after {
+	animation-duration: 800ms;
+	animation-timing-function: ease;
+	animation-name: checkmark;
+	transform: scaleX(-1) rotate(135deg);
+}
+
+.checkmark:after {
+	opacity: 1;
+	height: 12px;
+	width: 6px;
+	transform-origin: left top;
+	border-right: 3px solid #fff;
+	border-top: 3px solid #fff;
+	/* border-right: 3px solid #000;
+  border-top: 3px solid #000; */
+	content: "";
+	/* left: 50%; */
+	/* top: 50%; */
+	position: absolute;
+}
+
+@keyframes checkmark {
+	0% {
+		height: 0;
+		width: 0;
+		opacity: 1;
+	}
+	20% {
+		height: 0;
+		width: 6px;
+		opacity: 1;
+	}
+	40% {
+		height: 12px;
+		width: 6px;
+		opacity: 1;
+	}
+	100% {
+		height: 12px;
+		width: 6px;
+		opacity: 1;
+	}
+}
 
 #redLocator {
 	position: absolute;

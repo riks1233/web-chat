@@ -57,8 +57,6 @@ function getConnectedUserHtml(publicId, username, colorGradientCss) {
 
 // var socket = io.connect();
 
-
-
 var users = [];
 var $connectedUsers = $('#connectedUsers');
 var $userMessageForm = $('#userMessageForm');
