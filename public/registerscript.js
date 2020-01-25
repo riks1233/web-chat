@@ -84,9 +84,8 @@ $.getJSON(circleColorsJsonURL, function (dataArray) {
 		let container = circleChoiceContainers[i];
 		let $circle = $($(container).children()[0]);
 		$circle.click(function () {
-			colorChoiceSfx.pause();
-			colorChoiceSfx.currentTime = 0;
-			colorChoiceSfx.play();
+			// colorChoiceSfxPromise = playSfxFromStart(colorChoiceSfx, colorChoiceSfxPromise);
+			playSfx(colorChoiceSfx);
 			$circle.css({
 				'min-width': CHOOSE_CIRCLE_MAX_DIAMETER,
 				'min-height': CHOOSE_CIRCLE_MAX_DIAMETER
@@ -241,10 +240,9 @@ function placeTicks() {
 		$greyArrow = $('#greyArrow');
 		$greyArrow.remove();
 		if ($currentTick.get(0) != $closestTickToMouse.get(0)) {
-			colorDirectionSfx.pause();
-			colorDirectionSfx.volume = 0.2;
-			colorDirectionSfx.currentTime = 0;
-			colorDirectionSfx.play();
+			// colorDirectionSfx.volume = 0.2;
+			// colorDirectionSfxPromise = playSfxFromStart(colorDirectionSfx, colorDirectionSfxPromise);
+			playSfx(colorDirectionSfx, 0.2);
 		}
 		$currentTick = $closestTickToMouse;
 		if (!($closestTickToMouse.children().length)) {
@@ -255,15 +253,14 @@ function placeTicks() {
 			});
 		}
 
-		hoveredDegree = degree + degreeOffset -90;
+		hoveredDegree = degree + degreeOffset - 90;
 		hoveredStyle = constructBackgroundStyle(yourCircleRGBString, hoveredDegree); // will be needed when desired direction is selected
 	});
 
 	$regYourCircleHover.click(function () {
-		colorDirectionSfx.pause();
-		colorDirectionSfx.volume = 1;
-		colorDirectionSfx.currentTime = 0;
-		colorDirectionSfx.play();
+		// colorDirectionSfx.volume = 1;
+		// colorDirectionSfxPromise = playSfxFromStart(colorDirectionSfx, colorDirectionSfxPromise);
+		playSfx(colorDirectionSfx);
 		if (!($arrow == null)) {
 			$arrow.remove();
 		}
@@ -465,6 +462,21 @@ function getRGBStringFromBackgroundStyle(backgroundStyle) {
 
 function constructBackgroundStyle(RGBString, degree) {
 	return `linear-gradient(${degree}deg,${RGBString})`;
+}
+
+function playSfx(sfx, volume = 1) {
+	sfx.volume = volume;
+	if (sfx.paused) {
+		sfx.play().catch(error => {
+			if (error instanceof DOMException) {
+				console.log('Please interact with the document first to hear audio.');
+			} else {
+				throw error;
+			}
+		});
+	} else {
+		sfx.currentTime = 0;
+	}
 }
 
 // to move red locator

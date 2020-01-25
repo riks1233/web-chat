@@ -19,8 +19,7 @@ let $connectedUsers = $('#connectedUsers');
 let $userMessageForm = $('#userMessageForm');
 let $inputBox = $('#inputBox');
 let $messages = $('#messages');
-let messageAudio = $('#messageAudio').get(0);
-messageAudio.muted = false;
+let messageSfx = new Audio('./sfx/new_msg.mp3');
 
 if (!(yourName == null))
 	appendToMessages(getSysMessageUserJoinedHtml(yourName));
@@ -143,12 +142,25 @@ function getConnectedUserHtml(publicId, username, colorGradientCss) {
 function appendToMessages(html) {
 	$messages.append(html);
 	scrollToNewMessages();
-	messageAudio.pause();
-	messageAudio.currentTime = 0;
-	messageAudio.play();
+	playSfx(messageSfx);
 }
 
 function scrollToNewMessages() {
 	let messagesDomObj = $messages.get(0);
 	messagesDomObj.scrollTop = messagesDomObj.scrollHeight;
+}
+
+function playSfx(sfx, volume = 1) {
+	sfx.volume = volume;
+	if (sfx.paused) {
+		sfx.play().catch(error => {
+			if (error instanceof DOMException) {
+				console.log('Please interact with the document first to hear audio.');
+			} else {
+				throw error;
+			}
+		});
+	} else {
+		sfx.currentTime = 0;
+	}
 }
