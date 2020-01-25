@@ -1,40 +1,36 @@
 const CHOOSE_CIRCLE_MOUSE_APPROACH_RANGE = 70;
-// const CHOOSE_CIRCLE_APPROACH_BOX_SIDE = 100;
 const CHOOSE_CIRCLE_DEFAULT_DIAMETER = 30;
 const CHOOSE_CIRCLE_MAX_DIAMETER = 46;
 const CHOOSE_CIRCLE_HOVER_DIAMETER = CHOOSE_CIRCLE_MAX_DIAMETER + 20;
 const CHOOSE_CIRCLE_CONTAINER_SIDE = 50;
 const CHOOSE_CIRCLE_APPROACH_DIAMETER_DIFF = CHOOSE_CIRCLE_MAX_DIAMETER - CHOOSE_CIRCLE_DEFAULT_DIAMETER;
 const TICK_COUNT = 12;
-// const TICK_WIDTH = 10;
-// const TICK_HEIGHT = 2;
 const TICK_INACTIVE_DISTANCE = 70;
 const TICK_INACTIVE_BG_HEX = '#ddd';
 const TICK_ACTIVE_DISTANCE = 134;
 
 circleColorsJsonURL = window.location.href + 'circle_colors';
 circleColorsLocalJsonUrl = './circle_colors.json';
-let socket = io.connect();
 //rgb color regex
-let rgbRegex = /rgb\([0-9,]*\)/g; //g for global match (find all matches rather than stopping after the first match)
-let rgbRegexSingle = /rgb\([0-9,]*\)/;
+const rgbRegex = /rgb\([0-9,]*\)/g; //g for global match (find all matches rather than stopping after the first match)
+const rgbRegexSingle = /rgb\([0-9,]*\)/;
 
 // let $redLocator = $('#redLocator');
 
-let $chooseCircleWrapper = $('#chooseCircleWrapper');
+const $chooseCircleWrapper = $('#chooseCircleWrapper');
 const $regChooseCircleColor = $('#regChooseCircleColor');
 let circleChoiceContainers;
 // console.log(circleChoiceContainers);
 let $selectedCircle;
 // circleChoiceContainers = $regChooseCircleColor.children();
-let $regYourCircleHover = $('#regYourCircleHover');
-let $regYourCircle = $('#regYourCircle');
-let $regYourNameField = $('#regYourNameField');
-let $regYourNameFieldUnderline = $('#regYourNameFieldUnderline');
+const $regYourCircleHover = $('#regYourCircleHover');
+const $regYourCircle = $('#regYourCircle');
+const $regYourNameField = $('#regYourNameField');
+const $regYourNameFieldUnderline = $('#regYourNameFieldUnderline');
 
 let selectedDegree = 180; //gradient direction
 
-let yourName = 'not_initialized';
+let yourName;
 let yourCircleSelectedStyle = $regYourCircle.css('background');
 let yourCircleRGBString = getRGBStringFromBackgroundStyle(yourCircleSelectedStyle);
 let arrowColor = yourCircleRGBString.match(rgbRegexSingle)[0]; // changes when new color is selected
@@ -58,25 +54,16 @@ let $greyArrow;
 let colorChoiceSfx = new Audio('./sfx/color_choice.mp3');
 let colorDirectionSfx = new Audio('./sfx/color_direction.mp3');
 
-// used to edit hover of name field
-let additionalStyle = document.createElement('style');
-additionalStyle.type = 'text/css';
-document.getElementsByTagName('head')[0].appendChild(additionalStyle);
+// Used in chatscript.js
+var socket;
 
-// fetch colors
-// $.getJSON(circleColorsJsonURL, function (dataArray) {
+// Fetch colors
 $.getJSON(circleColorsJsonURL, function (dataArray) {
-	// console.log(dataArray);
-	// console.log(result[0]);
 	let circleColorsHtml = '';
-	// for (let j = 0; j < 3; j++) {
 	for (let i = 0; i < dataArray.length; i++) {
 		let colorData = dataArray[i];
-		let colorName = colorData.name;
+		// let colorName = colorData.name; // color names are not being used
 		let colorsArray = colorData.colors;
-		// circleColorsHtml += `
-		// <div class="circle_choice_container">
-		// <div class="circle_choice" style="background: linear-gradient(${selectedDegree},`;
 		circleColorsHtml += `
 		<div class="circle_choice_container">
 		<div class="circle_choice" style="background: linear-gradient(180deg,`;
@@ -87,16 +74,12 @@ $.getJSON(circleColorsJsonURL, function (dataArray) {
 				circleColorsHtml += ',';
 			}
 		}
-		// circleColorsHtml += `);"></div></div>`;
 		circleColorsHtml += `);"></div></div>`;
-		// break;
 	}
-	// }
 	$regChooseCircleColor.append(circleColorsHtml);
 
 	circleChoiceContainers = $regChooseCircleColor.children();
 	updateCircleWrapperValues();
-	// $($(circleChoiceContainers[3]).children()[0]).append('<div class="checkmark draw"></div>');
 	for (let i = 0; i < circleChoiceContainers.length; i++) {
 		let container = circleChoiceContainers[i];
 		let $circle = $($(container).children()[0]);
@@ -108,11 +91,9 @@ $.getJSON(circleColorsJsonURL, function (dataArray) {
 				'min-width': CHOOSE_CIRCLE_MAX_DIAMETER,
 				'min-height': CHOOSE_CIRCLE_MAX_DIAMETER
 			});
-			// console.log($('body').css('width'));
-			// console.log($circle.offset().left + " : " + $circle.offset().top);
 			if ($selectedCircle != null && !($circle.get(0) === $selectedCircle.get(0))) {
+				// Selected circle deselection animation
 				$selectedCircle.empty(); // remove check mark
-				// console.log('tryna animate');
 				// remove transition to not interfere with jquery animation
 				$selectedCircle.css('transition', '0s');
 				$selectedCircle.animate({
@@ -124,7 +105,6 @@ $.getJSON(circleColorsJsonURL, function (dataArray) {
 						$(this).css('transition', '0.1s');
 					},
 					step: function (now, fx) {
-						// let $container = $(container);
 						let offset = $(this).offset();
 						let width = $(this).width();
 						let height = $(this).height();
@@ -144,18 +124,9 @@ $.getJSON(circleColorsJsonURL, function (dataArray) {
 
 							let circleSupposedDiameter = Math.round((CHOOSE_CIRCLE_DEFAULT_DIAMETER + CHOOSE_CIRCLE_APPROACH_DIAMETER_DIFF * howCloseToEdgeModifier) * 10) / 10;
 							let minWidth = parseInt($(this).css('min-width'));
-							// console.log(circleSupposedDiameter , minWidth);
-							// console.log(minWidth);
 							if (circleSupposedDiameter >= minWidth) {
-								// console.log('stop');
 								$(this).stop();
 								$(this).css('transition', '0.1s');
-								// $(this).css({
-								// 	'min-width': circleSupposedDiameter,
-								// 	'min-height': circleSupposedDiameter
-								// });
-								// $(this).css('min-width', circleSupposedDiameter);
-								// $(this).css('min-height', circleSupposedDiameter);
 							}
 						}
 					}
@@ -167,41 +138,30 @@ $.getJSON(circleColorsJsonURL, function (dataArray) {
 			$checkmark.css('transform', 'translate(15px, 24px)');
 			$checkmark.toggle();
 
-			yourCircleRGBString = getRGBStringFromBackgroundStyle($circle.css('background'));
-
-			// console.log(yourCircleRGBString);
+			yourCircleRGBString = getRGBStringFromBackgroundStyle($circle.css('background'))
 			yourCircleSelectedStyle = constructBackgroundStyle(yourCircleRGBString, selectedDegree);
 			arrowColor = yourCircleRGBString.match(rgbRegexSingle)[0];
 			if (!($arrow == null)) {
-				// $arrow = $('#arrow');
-				// console.log($arrow.get(0));
 				$arrow.css({
 					'border-bottom-color': arrowColor
 				});
 			}
-			// console.log(`border-image: linear-gradient(90deg, ${yourCircleRGBString});`);
-
-			// $regYourNameField.focus(function () {
-			// 	$regYourNameFieldUnderline.css({
-			// 		'background': `linear-gradient(90deg, ${yourCircleRGBString})`,
-			// 		'height': '3px'
-			// 	});
-			// });
 			$regYourCircle.css('background', yourCircleSelectedStyle);
 			$selectedCircle = $circle;
 		});
 		$circle.mouseleave(function () {
 			$regYourCircle.css('background', yourCircleSelectedStyle);
-		})
+		});
 	}
 });
 
 placeTicks();
-// place ticks (ticks are selectedDegree values)
+// place ticks (ticks represent degree values to which we can rotate selected gradient)
 function placeTicks() {
+	// Tick placement
 	let tickHtml = '<div class="tick"></div>';
 	let ticksHtml = tickHtml.repeat(TICK_COUNT);
-	// not putting ticks under your circle directly because of jiggling when clicked
+	// not putting ticks under regYourCircle directly because of jiggling when clicked
 	$regYourCircleHover.append(ticksHtml);
 	ticks = $regYourCircleHover.children();
 	ticks = ticks.slice(1, ticks.length);
@@ -213,33 +173,27 @@ function placeTicks() {
 		rotate(${i * tickDeltaDegree + degreeOffset}deg)
 		translate(${TICK_INACTIVE_DISTANCE}px)
 		`);
-		// $tick.css('transform', `translate(-50%, -50%)
-		// translate(${TICK_INACTIVE_DISTANCE}px)
-		// `);
 	}
-	$(ticks[0]).append(`<div id="arrow"></div>`); // create an arrow on first tick
+	// create an arrow on first tick
+	$(ticks[0]).append(`<div id="arrow"></div>`);
 	$arrow = $('#arrow');
 	$arrow.css({
 		'border-bottom-color': arrowColor,
 		'transform': `rotate(90deg) translate(-13px, 8px)`
 	});
 	$currentTick = $(ticks[0]);
-	// $arrow = $('#arrow');
+
+	// regYourCircleHover listeners configuration (that need initial values calculated at the beginning of this function)
 	$regYourCircleHover.mouseenter(function () {
-		// console.log("hovering");
 		for (let i = 0; i < ticks.length; i++) {
 			let $tick = $(ticks[i]);
-			// $tick.css('background-color', `#ddd`);
 			$tick.css('transform', `translate(-50%, -50%)
 			rotate(${i * tickDeltaDegree + degreeOffset}deg)
 			translate(${TICK_ACTIVE_DISTANCE}px)
 			`);
-			// $tick.empty();
-
 		}
 	});
 	$regYourCircleHover.mouseleave(function () {
-		// console.log("unhovering");
 		for (let i = 0; i < ticks.length; i++) {
 			let $tick = $(ticks[i]);
 			$tick.css('transform', `translate(-50%, -50%)
@@ -252,39 +206,25 @@ function placeTicks() {
 
 	$regYourCircleHover.mousemove(function (mouseEvent) {
 		// console.log('mousemove');
-		// calc can be done once
+		// calc can be done once after window resize
 		let circleCenterCoords = getElementCenterCoords($regYourCircleHover);
 		let circleCenterX = Math.floor(circleCenterCoords[0]);
 		let circleCenterY = Math.floor(circleCenterCoords[1]);
+
 		let centerToMouseVector = [mouseEvent.pageX - circleCenterX, mouseEvent.pageY - circleCenterY];
-		// console.log(centerToMouseVector);
 		let vectorMagnitude = Math.sqrt(Math.pow(centerToMouseVector[0], 2) + Math.pow(centerToMouseVector[1], 2));
-		// console.log(vectorMagnitude);
 		let normalizedVector = [centerToMouseVector[0] / vectorMagnitude, centerToMouseVector[1] / vectorMagnitude];
-		// console.log(normalizedVector);
 		let mouseCoordsOnTickCircle = [circleCenterX + normalizedVector[0] * TICK_ACTIVE_DISTANCE, circleCenterY + normalizedVector[1] * TICK_ACTIVE_DISTANCE];
-
-		// console.log(mouseCoordsOnTickCircle);
-
-		// console.log(circleCenterX, circleCenterY, mouseCoordsOnTickCircle[0], mouseCoordsOnTickCircle[1]);
-		// console.log(mouseEvent.pageX, mouseEvent.pageY);
-		// console.log(cicleCenterX, cicleCenterY);
 		let $closestTickToMouse;
 		let smallestTickDistanceToMouse;
 		let degree = 0;
 		for (let i = 0; i < ticks.length; i++) {
 
 			$tick = $(ticks[i]);
-			// $tick.empty();
 			tickCenterCoords = getElementCenterCoords($tick);
 			tickCenterX = tickCenterCoords[0];
 			tickCenterY = tickCenterCoords[1];
 			tickDistanceToMouse = euclideanDistance(tickCenterX, tickCenterY, mouseCoordsOnTickCircle[0], mouseCoordsOnTickCircle[1]);
-			// if ($tick.get(0) == $currentTick.get(0)) {
-			// 	console.log('sup');
-
-			// 	// currentTickDistanceToMouse = tickDistanceToMouse;
-			// }
 			if (smallestTickDistanceToMouse == null) {
 				smallestTickDistanceToMouse = tickDistanceToMouse;
 			}
@@ -297,22 +237,7 @@ function placeTicks() {
 				degree = i * tickDeltaDegree;
 			}
 			$tick.css('background', TICK_INACTIVE_BG_HEX);
-			// break;
 		}
-		// redirect gradient here
-		// $closestTickToMouse.css('background', arrowColor);
-		// a freshly appended element cannot be animated
-		// $arrow = $('#arrow');
-		// $arrow.remove();
-		// $currentTick = $closestTickToMouse;
-		// $closestTickToMouse.append(`<div id="arrow"></div>`);
-		// $arrow = $('#arrow');
-		// $arrow.css({
-		// 	'border-bottom-color': arrowColor,
-		// 	// 'transform': `rotate(90deg) translate(-6px, 10px)`
-		// 	// 'transform': `rotate(90deg) translate(-4px, 0)`
-		// 	'transform': `rotate(90deg) translate(-13px, 14px)`
-		// });
 		$greyArrow = $('#greyArrow');
 		$greyArrow.remove();
 		if ($currentTick.get(0) != $closestTickToMouse.get(0)) {
@@ -326,31 +251,12 @@ function placeTicks() {
 			$closestTickToMouse.append(`<div id="greyArrow"></div>`);
 			$greyArrow = $('#greyArrow');
 			$greyArrow.css({
-				// 'transform': `rotate(90deg) translate(-6px, 10px)`
-				// 'transform': `rotate(90deg) translate(-4px, 0)`
 				'transform': `rotate(90deg) translate(-7px, 4px)`
 			});
 		}
 
 		hoveredDegree = degree + degreeOffset -90;
 		hoveredStyle = constructBackgroundStyle(yourCircleRGBString, hoveredDegree); // will be needed when desired direction is selected
-		// $regYourCircle.css('background', hoveredStyle);
-		// $regYourCircle.css('transform', `rotate(${hoveredDegree}deg)`);
-		// }
-
-		// if (currentTickDistanceToMouse >= 10 && currentTickDistanceToMouse <= 50) {
-		// 	// console.log('yo');
-		// 	let arrowMinSize = 20;
-		// 	let arrowMaxSize = 28;
-		// 	let arrowSizeInterval = arrowMaxSize - arrowMinSize;
-		// 	// 50 - 10 = 40 (is distance interval)
-		// 	let arrowSize = arrowMinSize + arrowSizeInterval - ((currentTickDistanceToMouse - 10) * arrowSizeInterval / 40);
-		// 	$arrow.css({
-		// 		'border-width': `0 ${arrowSize/2}px ${arrowSize}px ${arrowSize/2}px`,
-		// 		'transform': `rotate(90deg) translate(-${arrowSize/2}px, ${arrowSize/2}px)`
-		// 	});
-		// }
-
 	});
 
 	$regYourCircleHover.click(function () {
@@ -368,32 +274,21 @@ function placeTicks() {
 			'border-bottom-color': arrowColor,
 			'transform': `rotate(90deg) translate(-13px, 8px)`
 		});
-
-		// $arrow.css({
-		// 	// 'transform': `rotate(90deg) translate(-4px, 0)`
-		// 	'transition': '1s',
-		// 	'transition-property': 'transform'});
-
-		// $arrow.css('transform', `rotate(90deg) translate(-13px, 2px)`);
-
 		yourCircleSelectedStyle = hoveredStyle;
 		selectedDegree = hoveredDegree;
 		$regYourCircle.css('background', yourCircleSelectedStyle);
 	});
 }
 
+// document.body.addEventListener('click', function (mouseEvent) {
+// 	console.log(mouseX, mouseY);
+// });
 
-
-// $chooseCircleWrapper.get(0).addEventListener('mousemove', function (mouseEvent) {
 document.body.addEventListener('mousemove', function (mouseEvent) {
 	mouseX = mouseEvent.pageX;
 	mouseY = mouseEvent.pageY;
 	updateChoiceCirclesVisuals(mouseX, mouseY);
 }, false);
-
-document.body.addEventListener('click', function (mouseEvent) {
-	// console.log(mouseX, mouseY);
-});
 
 $(window).resize(function () {
 	updateCircleWrapperValues();
@@ -478,18 +373,12 @@ function updateAffectedChoiceCircleVisuals(affectedCircleContainersArray) {
 
 		let mouseDistanceToObjectCenter = Math.round(euclideanDistance(containerCenterX, containerCenterY, mouseX, mouseY));
 		let isMouseInRange = mouseDistanceToObjectCenter < CHOOSE_CIRCLE_MOUSE_APPROACH_RANGE;
-		// make selected circle bigger than others
 		if ($selectedCircle != null && $circle.get(0) === $selectedCircle.get(0)) {
 			// do nothing
 		} else if ($circle.is(":hover")) {
-			// console.log('a circle is hovered');
-			// $circle.css('transition-property', 'min-width, min-height, box-shadow');
 			$circle.css({
 				'min-width': CHOOSE_CIRCLE_HOVER_DIAMETER,
 				'min-height': CHOOSE_CIRCLE_HOVER_DIAMETER
-
-				// 'min-width': CHOOSE_CIRCLE_MAX_DIAMETER,
-				// 'min-height': CHOOSE_CIRCLE_MAX_DIAMETER
 			});
 			let hoveredCircleRGBString = getRGBStringFromBackgroundStyle($circle.css('background'));
 			if (yourCircleRGBString != hoveredCircleRGBString) {
@@ -497,9 +386,6 @@ function updateAffectedChoiceCircleVisuals(affectedCircleContainersArray) {
 				$regYourCircle.css('background', hoveredCircleStyle);
 			}
 		} else if (isMouseInRange) {
-			// $('#testoutput').text(mouseDistanceToObjectCenter);
-			let howCloseToCenterModifier = 1 - (mouseDistanceToObjectCenter) / (CHOOSE_CIRCLE_MOUSE_APPROACH_RANGE);
-
 			let howCloseToEdgeModifier = 1 - (mouseDistanceToObjectCenter - CHOOSE_CIRCLE_MAX_DIAMETER / 2) / (CHOOSE_CIRCLE_MOUSE_APPROACH_RANGE - CHOOSE_CIRCLE_MAX_DIAMETER / 2);
 
 			let circleDiameter = Math.round((CHOOSE_CIRCLE_DEFAULT_DIAMETER + CHOOSE_CIRCLE_APPROACH_DIAMETER_DIFF * howCloseToEdgeModifier) * 10) / 10;
@@ -517,49 +403,23 @@ function updateAffectedChoiceCircleVisuals(affectedCircleContainersArray) {
 }
 
 function goToChat() {
-	yourName = $regYourNameField.val();
-	if (!yourName.trim().length) { //if empty
-		yourName = 'Noname';
-		// console.log('noname set');
-	}
 	const url = window.location.href + 'chat';
-	// const reqData = {
-	// 	'name': name,
-	// 	'style': yourCircleSelectedStyle
-	// }
-
 	$.get(url, function (resData, status) {
-		// console.log(`${resData} and status is ${status}`);
-		// $('body').html(resData);
 		document.open();
 		document.write(resData);
 		document.close();
 	});
-
-	// console.log(`sending post request with data: ${reqData.name}`);
-	// $.post(url, reqData, function (resData, status) {
-	// 	console.log(`${resData} and status is ${status}`);
-	// 	// $('body').html(resData);
-	// 	document.open();
-	// 	document.write(resData);
-	// 	document.close();
-	// });
-
-	// $.ajax({
-	// 	url : url,
-	// 	type: 'POST',
-	// 	data: reqData,
-	// 	success: function (resData) {
-	// 		console.log(`${resData} and status is ${status}`);
-	// 	},
-	// 	error: function (error) {
-	// 		console.log(`error ${error}`);
-	// 	}
-	// });
-
-
-	// go to chat page
-
+	socket = io.connect();
+	yourName = $regYourNameField.val();
+	if (!yourName.trim().length) { //if empty
+		yourName = 'Noname';
+	}
+	socket.emit('new_user',
+		{
+			"username": yourName,
+			"color_schema": yourCircleSelectedStyle
+		}
+	);
 }
 
 function hexToRgbString(hex) {
