@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
+const io = require('socket.io')(server);
 
 server.listen(process.env.PORT || 3000);
 console.log('Server running...');
@@ -48,7 +48,7 @@ io.sockets.on('connection', function (socket) {
 		socket.publicId = id;
 		connections.push(socket);
 		console.log('User connected: %s sockets connected', connections.length);
-		
+
 		socket.username = data.username;
 		socket.colorGradientCss = `background: ${data.color_schema};`;
 		socket.broadcast.emit('sys_user_joined', {
